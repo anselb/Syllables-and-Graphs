@@ -1,4 +1,4 @@
-# Graph Project
+# Syllables and Graphs
 This project will examine common English syllables and how they lead into one another in a graph.
 This project will use a list of syllables from this [resource](http://www.fldoe.org/core/fileparse.php/7539/urlt/manual.pdf) (starting on page 34).
 I plan to find a list of syllabicated, or use a program to turn a list of words in syllables.
