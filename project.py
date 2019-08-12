@@ -84,9 +84,20 @@ def main():
     graph = Graph(weighted=True, directed=True)
     graph.make_graph_from_file("syllable_graph.txt")
 
-    print("Which syllable has the greatest influence?")
     # Add edge from 'er' to 'y' to make algorithm work better
     graph.add_edge('er', 'y', 1)
+
+    # Diameter
+    diameter_info = graph.diameter()
+    diameter = diameter_info[0]
+    start = diameter_info[1]
+    end = diameter_info[2]
+    print(f"Diameter: {diameter}")
+    shortest_path = graph.find_shortest_path(start.id, end.id)
+    print(f"Path with length of diameter: {shortest_path}\n")
+
+    # Syllable influence
+    print("Which syllable has the greatest influence?")
     ranks = graph.influencer()
     for i in range(len(ranks)):
         print(f"{i + 1}. {ranks[i][1]}: {ranks[i][0]}")
