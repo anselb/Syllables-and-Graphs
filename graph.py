@@ -608,91 +608,65 @@ class Graph:
         # If all vertices have an even degree, the graph is Eulerian
         return True
 
+    def reverse_directions(self):
+        """Return dictionary of vertices and vertcies that lead into them."""
+        reverse_dict = {}
+
+        for from_vert in self:
+            for to_vert in from_vert.get_neighbors():
+                if to_vert in reverse_dict:
+                    reverse_dict[to_vert].add(from_vert)
+                else:
+                    reverse_dict[to_vert] = set([from_vert])
+
+        return reverse_dict
+
     def diameter(self):
         """Return the diameter of the graph."""
         pass
 
-    def influencer(self):
+    def influencer(self, iterations=30):
         """Calculate the influence of each vertex."""
-        pass
+        # All vertices start with the same rank: 1 / number of vertices
+        ranks = {vertex: 1 / self.num_vertices for vertex in self}
+
+        # Get all vertices and vertices that lead into those vertices
+        reverse_dict = self.reverse_directions()
+
+        # Calculate the rank "iterations" number of times
+        for _ in range(iterations):
+            new_ranks = {}
+
+            # Calculate new rank for each vertex
+            for vertex in ranks:
+                new_rank = 0
+
+                # Each rank for a given vertex depends on the vertices
+                # directing into it
+                for from_vert in reverse_dict[vertex]:
+                    # Portion of rank provided by from_vert is:
+                    # from_vert's previous rank
+                    # ------- divided by -------
+                    # number of vertices from_vert directs into
+                    portion = ranks[from_vert] / len(from_vert.get_neighbors())
+                    # Each from_vert leading into this vertex contributes to
+                    # this vertex's rank
+                    new_rank += portion
+
+                # Set new rank for this vertex
+                new_ranks[vertex] = new_rank
+
+            # Reset ranks after all of the new ranks have been calculated
+            ranks = new_ranks.copy()
+
+        # Create a list of vertex ids and their ranks
+        rank_list = [(rank, vert.id) for vert, rank in ranks.items()]
+        # Sort the vertices by their rank
+        rank_list.sort()
+
+        return rank_list
 
 
 # Driver code
 if __name__ == "__main__":
-
-    # Challenge 1: Create the graph and output the vertices & edges
-    g = Graph()
-
-    # Add your friends
-    g.add_vertex("Myself")
-    g.add_vertex("Friend 1")
-    g.add_vertex("Friend 2")
-    g.add_vertex("Friend 3")
-    g.add_vertex("Friend 4")
-    g.add_vertex("Friend 5")
-    g.add_vertex("Friend 6")
-    g.add_vertex("Friend 7")
-    g.add_vertex("Friend 8")
-    g.add_vertex("Friend 9")
-
-    # Add connections (non weighted edges for now)
-    g.add_edge("Myself", "Friend 1")
-    g.add_edge("Myself", "Friend 2")
-    g.add_edge("Myself", "Friend 3")
-    g.add_edge("Myself", "Friend 4")
-    g.add_edge("Myself", "Friend 5")
-    g.add_edge("Myself", "Friend 6")
-    g.add_edge("Myself", "Friend 7")
-    g.add_edge("Myself", "Friend 8")
-    g.add_edge("Myself", "Friend 9")
-
-    g.add_edge("Friend 1", "Friend 9")
-    g.add_edge("Friend 1", "Myself")
-    g.add_edge("Friend 1", "Friend 3")
-
-    g.add_edge("Friend 2", "Friend 8")
-    g.add_edge("Friend 2", "Friend 7")
-    g.add_edge("Friend 2", "Myself")
-    g.add_edge("Friend 2", "Friend 5")
-
-    g.add_edge("Friend 3", "Friend 1")
-    g.add_edge("Friend 3", "Myself")
-
-    g.add_edge("Friend 4", "Myself")
-    g.add_edge("Friend 4", "Friend 7")
-    g.add_edge("Friend 4", "Friend 6")
-    g.add_edge("Friend 4", "Friend 5")
-
-    g.add_edge("Friend 5", "Friend 4")
-    g.add_edge("Friend 5", "Friend 2")
-    g.add_edge("Friend 5", "Myself")
-    g.add_edge("Friend 5", "Friend 9")
-    g.add_edge("Friend 5", "Friend 6")
-
-    g.add_edge("Friend 6", "Friend 5")
-    g.add_edge("Friend 6", "Friend 4")
-    g.add_edge("Friend 6", "Myself")
-    g.add_edge("Friend 6", "Friend 7")
-
-    g.add_edge("Friend 7", "Friend 6")
-    g.add_edge("Friend 7", "Friend 4")
-    g.add_edge("Friend 7", "Myself")
-    g.add_edge("Friend 7", "Friend 2")
-    g.add_edge("Friend 7", "Friend 9")
-
-    g.add_edge("Friend 8", "Myself")
-    g.add_edge("Friend 8", "Friend 2")
-
-    g.add_edge("Friend 9", "Friend 7")
-    g.add_edge("Friend 9", "Friend 5")
-    g.add_edge("Friend 9", "Myself")
-    g.add_edge("Friend 9", "Friend 1")
-
-    # Print vertices
-    print(f"The vertices are: {g.get_vertices()} \n")
-
-    # Print edges
-    print("The edges are: ")
-    for v in g:
-        for w in v.get_neighbors():
-            print(f"( {v.get_id()} , {w.get_id()} )")
+    pass
