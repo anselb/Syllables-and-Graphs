@@ -84,8 +84,12 @@ def main():
     graph = Graph(weighted=True, directed=True)
     graph.make_graph_from_file("syllable_graph.txt")
 
-    # Used to verify that file write is accurate
-    # verify_graph(graph)
+    print("Which syllable has the greatest influence?")
+    # Add edge from 'er' to 'y' to make algorithm work better
+    graph.add_edge('er', 'y', 1)
+    ranks = graph.influencer()
+    for i in range(len(ranks)):
+        print(f"{i + 1}. {ranks[i][1]}: {ranks[i][0]}")
 
 
 if __name__ == '__main__':
