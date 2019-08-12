@@ -207,6 +207,7 @@ class Graph:
         edge_list = []
         directed = False
         weighted = False
+        got_type = False
 
         with open(file_name, 'r') as f:
             for line in f.readlines():
@@ -219,9 +220,10 @@ class Graph:
                     continue
 
                 # Find graph type
-                if line[0] in string.ascii_letters:
+                if line[0] in string.ascii_letters and not got_type:
                     if line[0] in valid_types:
                         graph_type = line[0].upper()
+                        got_type = True
                     else:
                         raise ValueError("Looking for type 'G' or 'D'")
 
