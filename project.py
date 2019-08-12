@@ -34,8 +34,8 @@ def get_edges(syllables):
     return edges
 
 
-def main():
-    """Run the project."""
+def old_main():
+    """Old code for creating graph using hyphenator."""
     common_syllables = ['ing', 'er', 'a', 'ly', 'ed', 'i', 'es', 're', 'tion',
                         'in', 'e', 'con', 'y', 'ter', 'ex', 'al', 'de', 'com',
                         'o', 'di', 'en', 'an', 'ty', 'ry', 'u', 'ti', 'ri',
@@ -43,6 +43,8 @@ def main():
     syllables_set = set(common_syllables)
 
     graph = Graph(weighted=True, directed=True)
+
+    # Make graph using hyphenator
     for syllable in common_syllables:
         graph.add_vertex(syllable)
 
@@ -52,6 +54,38 @@ def main():
         to_vert = edge[1]
         weight = edges[edge]
         graph.add_edge(from_vert, to_vert, weight)
+
+    # Write edge info to graph
+    with open("syllable_graph.txt", "w") as file:
+        file.write("D\n")
+        vertices = ",".join(common_syllables)
+        file.write(vertices + "\n")
+        for edge in edges:
+            data = f"({edge[0]},{edge[1]},{edges[edge]})\n"
+            file.write(data)
+
+    verify_graph(graph)
+
+
+def verify_graph(graph):
+    """Vertify that file write is accurate.
+
+    30 vertices, 284 edges
+    """
+    sum = 0
+    for vertex in graph.get_vertices():
+        sum += len(vertex.get_neighbors())
+    print(len(graph.get_vertices()))
+    print(sum)
+
+
+def main():
+    """Run the project."""
+    graph = Graph(weighted=True, directed=True)
+    graph.make_graph_from_file("syllable_graph.txt")
+
+    # Used to verify that file write is accurate
+    # verify_graph(graph)
 
 
 if __name__ == '__main__':
