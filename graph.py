@@ -661,8 +661,8 @@ class Graph:
 
         # Create a list of vertex ids and their ranks
         rank_list = [(rank, vert.id) for vert, rank in ranks.items()]
-        # Sort the vertices by their rank
-        rank_list.sort()
+        # Sort the vertices by their rank, bigger number is higher rank
+        rank_list.sort(reverse=True)
 
         return rank_list
 
