@@ -609,7 +609,7 @@ class Graph:
         return True
 
     def reverse_directions(self):
-        """Return dictionary of vertices and vertcies that lead into them."""
+        """Return dictionary of vertices and vertices that lead into them."""
         reverse_dict = {}
 
         for from_vert in self:
@@ -623,7 +623,64 @@ class Graph:
 
     def diameter(self):
         """Return the diameter of the graph."""
-        pass
+        # Set bounds of diameter
+        left = 0
+        right = self.num_vertices
+
+        # While the bound range is still big
+        while right - left > 1:
+            # Calculate the average level to check
+            level = (left + right) // 2
+            # This variable tracks if vertices were found at a given level
+            something_at_level = False
+            # Do a breadth first search for each vertex in the graph
+            for vert in self:
+                at_level = self.breadth_first_search(vert, level)
+                # If there are vertices at this level,
+                if len(at_level) > 0:
+                    # Mark that there is something at the level
+                    something_at_level = True
+                    # If vertices were found, nothing more needs to be checked
+                    break
+            # If there are vertices at this level,
+            if something_at_level:
+                # Raise the left, or lower, bound
+                left = level
+            # If there is nothing,
+            else:
+                # Lower the right, or upper, bound
+                right = level
+
+        # Find the true diameter using the bounds
+        something_at_level = True
+        # Start at the left bound
+        diameter = left
+        # Initialize variables for start and end of a path with length diameter
+        start = None
+        end = None
+        # While there exists a shortest path at a level
+        while something_at_level:
+            # Do a breadth first search for each vertex in the graph
+            for vert in self:
+                # Get the vertices that are "diameter" edges away
+                at_level = self.breadth_first_search(vert, diameter)
+                # If there are vertices at this level,
+                if len(at_level) > 0:
+                    # Capture one of possibly many starting and ending vertices
+                    # with a shortest path length of the diameter size
+                    start = vert
+                    end = at_level.pop()
+                # If there is nothing at this level
+                else:
+                    # Break the loop
+                    something_at_level = False
+            # Check if there is any path length at the next diameter size
+            diameter += 1
+
+        # Since there was nothing at the last level, subtract 1 from diameter
+        diameter -= 1
+        # Return diameter and vertices with a path length of that diameter
+        return (diameter, start, end)
 
     def influencer(self, iterations=30):
         """Calculate the influence of each vertex."""
@@ -665,8 +722,3 @@ class Graph:
         rank_list.sort(reverse=True)
 
         return rank_list
-
-
-# Driver code
-if __name__ == "__main__":
-    pass
