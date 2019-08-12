@@ -247,8 +247,9 @@ class Graph:
 
         # Add vertices to graph
         # TODO: Does not handle string vertex names
-        for vertex in vertices.split(","):
-            self.add_vertex(int(vertex))
+        if vertices != "":
+            for vertex in vertices.split(","):
+                self.add_vertex(vertex)
 
         # Add edges to graph
         # TODO: Does not handle string vertex names or decimal weights
@@ -261,10 +262,10 @@ class Graph:
             # Split the tuple correctly
             if weighted:
                 # Remove parenthesis from strings, and convert strings to ints
-                self.add_edge(int(data[0]), int(data[1]), int(data[2]))
+                self.add_edge(data[0], data[1], int(data[2]))
             else:
                 # Remove parenthesis from strings, and convert strings to ints
-                self.add_edge(int(data[0]), int(data[1]))
+                self.add_edge(data[0], data[1])
 
     def get_edge_list(self):
         """Return a list of edges (with their weights if weighted)."""
