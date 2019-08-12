@@ -19,22 +19,22 @@ class TrieNode:
             return -1
 
     def add(self, node):
-        if node.getLetter() not in self.children:
-            self.children[node.getLetter()] = node
+        if node.get_letter() not in self.children:
+            self.children[node.get_letter()] = node
             return node
         else:
-            return self.get(node.getLetter())
+            return self.get(node.get_letter())
 
-    def getLetter(self):
+    def get_letter(self):
         return self.letter
 
-    def getIsWord(self):
+    def get_is_word(self):
         return self.isWord
 
-    def setValue(self, value):
+    def set_value(self, value):
         self.value = value
 
-    def getValue(self):
+    def get_value(self):
         return self.value
 
 
@@ -48,7 +48,7 @@ class Trie:
         else:
             return -1
 
-    def createValueDict(self, word):
+    def create_value_dict(self, word):
         valueDict = {}
         modifiedword = word.replace(".", "")
         amountOfNumbers = 0
@@ -62,7 +62,7 @@ class Trie:
         return valueDict
 
     def add(self, word):
-        valueDict = self.createValueDict(word)
+        valueDict = self.create_value_dict(word)
         modifiedWord = ''.join([i for i in word if not i.isdigit()])
 
         if modifiedWord[0] not in self.children:
@@ -74,10 +74,10 @@ class Trie:
             node = TrieNode(modifiedWord[x], 0, currentParent, isLastLetter)
             currentParent = currentParent.add(node)
             if isLastLetter:
-                currentParent.setValue(valueDict)
+                currentParent.set_value(valueDict)
 
 
-def readPatternsFile():
+def read_patterns_file():
     start = time.time()
     trie = Trie()
     content = []
@@ -91,7 +91,7 @@ def readPatternsFile():
     return trie
 
 
-def attemptToMatchPattern(index, word, trie):
+def attempt_to_match_pattern(index, word, trie):
     pattern = ""
     nextNode = trie
     valueDict = {}
@@ -101,8 +101,8 @@ def attemptToMatchPattern(index, word, trie):
         nextNode = nextNode.get(letter)
         if nextNode != -1:
             pattern += letter
-            if nextNode.getIsWord():
-                resultDict = nextNode.getValue()
+            if nextNode.get_is_word():
+                resultDict = nextNode.get_value()
                 pattern = ""
                 for x in resultDict.items():
                     previousValue = valueDict.get(x[0]+index, 0)
@@ -113,17 +113,17 @@ def attemptToMatchPattern(index, word, trie):
     return valueDict if len(valueDict) > 0 else False
 
 
-def parseWord(word, trie):
+def parse_word(word, trie):
     values = [0] * len(word)
     results = []
     for x in range(0, len(word)):
-        res = attemptToMatchPattern(x, word, trie)
-        resBack = attemptToMatchPattern(x, word+".", trie)
+        res = attempt_to_match_pattern(x, word, trie)
+        resBack = attempt_to_match_pattern(x, word+".", trie)
         if res is not False:
             results.append(res)
         if resBack is not False:
             results.append(resBack)
-    resFirst = attemptToMatchPattern(0, "."+word, trie)
+    resFirst = attempt_to_match_pattern(0, "."+word, trie)
     results.append(resFirst) if resFirst is not False else None
 
     mainDict = {}
@@ -140,21 +140,18 @@ def parseWord(word, trie):
     return finalWord
 
 
-def processEnable1():
+def process_enable1():
     start = time.time()
-    trie = readPatternsFile()
+    trie = read_patterns_file()
     hyphenCounts = {key: 0 for key in range(0, 10)}
     content = []
     with open("enable1.txt") as file:
         content = [line.rstrip() for line in file]
         file.close()
     for line in content:
-        result = parseWord(line, trie)
+        result = parse_word(line, trie)
         amount = result.count("-")
         hyphenCounts[amount] += 1
     print(hyphenCounts)
     end = time.time()
     print(str(end - start) + " Seconds to process enable1 List")
-
-
-processEnable1()
