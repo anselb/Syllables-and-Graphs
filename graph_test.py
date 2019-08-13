@@ -260,6 +260,9 @@ class GraphTest(unittest.TestCase):
         g.add_edge("H", "G")
         g.add_edge("J", "B")
 
+        # Get all vertices accessible at level 0
+        level_0 = g.breadth_first_search(v_a, 0, only_new=True)
+        self.assertCountEqual(level_0, [v_a])
         # Get all vertices accessible at level 1
         level_1 = g.breadth_first_search(v_a, 1, only_new=False)
         self.assertCountEqual(level_1, [v_b, v_c])
