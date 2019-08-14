@@ -426,7 +426,7 @@ class Graph:
             # Otherwise, just get the unordered set
             neighbors = vertex.get_neighbors()
 
-        # For each neighor of this vertex,
+        # For each neighbor of this vertex,
         for neighbor in neighbors:
             # Check if it does not have a parent
             if neighbor.parent is None:
@@ -502,27 +502,27 @@ class Graph:
             # Otherwise, just get the unordered set
             neighbors = vertex.get_neighbors()
 
-        # Clique members must be neighor of vertex parameter
-        for neighor in neighbors:
-            # Keep track of clique memebers that are adjacent to neighor
+        # Clique members must be neighbor of vertex parameter
+        for neighbor in neighbors:
+            # Keep track of clique memebers that are adjacent to neighbor
             clique_counter = 0
-            # Check each clique member if it is adjacent to current neighor
+            # Check each clique member if it is adjacent to current neighbor
             for clique_member in clique:
-                # If the current neighor is not adjacent to this clique member
-                if neighor not in clique_member.get_neighbors():
-                    # Break out of this loop, and move to next neighor
+                # If the current neighbor is not adjacent to this clique member
+                if neighbor not in clique_member.get_neighbors():
+                    # Break out of this loop, and move to next neighbor
                     break
                 # If it is, increase the count of adjacent clique members
                 clique_counter += 1
-                # If all clique members are adjacent to current neighor,
+                # If all clique members are adjacent to current neighbor,
                 if clique_counter == len(clique):
-                    # Add the current neighor to the clique
-                    clique.add(neighor)
+                    # Add the current neighbor to the clique
+                    clique.add(neighbor)
                     # Make sure to break out of loop
                     # Avoids RuntimeError: Set changed size during iteration
                     break
 
-        # After all neighors checked, return the clique
+        # After all neighbors checked, return the clique
         return clique
 
     def is_connected(self):
@@ -755,3 +755,33 @@ class Graph:
         total_edges = (self.num_vertices * (self.num_vertices - 1))
         average_path = total_path_length / total_edges
         return average_path
+
+    def longest_walk(self):
+        # reverse = self.reverse_directions()
+        # neighbor_count = [(len(reverse[vert]), vert) for vert in reverse]
+        neighbor_count = [(len(vert.get_neighbors()), vert) for vert in self]
+        neighbor_count.sort()
+        print(neighbor_count)
+        vertices = self.get_vertices()
+        walk = []
+
+        starting = neighbor_count[0][1]
+        vertices.remove(starting)
+        walk.append(starting.id)
+
+        for ind in range(len(neighbor_count) - 1):
+            vert = walk[ind]
+
+            neighbors = self.vert_list[vert].get_neighbors()
+            added = False
+            for neighbor in neighbor_count:
+                vertex = neighbor[1]
+                if vertex in neighbors and vertex in vertices:
+                    walk.append(vertex.id)
+                    vertices.remove(vertex)
+                    added = True
+            if not added:
+                break
+
+        print(vertices)
+        return walk
