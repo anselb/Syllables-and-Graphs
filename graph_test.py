@@ -781,6 +781,16 @@ class GraphTest(unittest.TestCase):
             d.add_vertex("A")
             d.is_eulerian(is_connected=False)
 
+    def test_average_path(self):
+        g = Graph(weighted=False, directed=True)
+        # Graph should correctly calculate path length
+        g.add_edge('A', 'B')
+        # Path from B to A does not exist, so it is 0
+        self.assertEqual(g.average_path(), 0.5)
+        # Path now exists
+        g.add_edge('B', 'A')
+        self.assertEqual(g.average_path(), 1)
+
 
 if __name__ == '__main__':
     unittest.main()
