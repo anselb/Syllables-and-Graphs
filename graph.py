@@ -722,3 +722,36 @@ class Graph:
         rank_list.sort(reverse=True)
 
         return rank_list
+
+    def average_path(self):
+        """Return the average path of the graph."""
+        # Keeping track of all paths
+        paths = {}
+
+        # Calculate all the shortest paths
+        for from_vert in self:
+            # Reset variables for each from_vert
+            something_at_level = True
+            # Don't count path from vertex to itself
+            level = 1
+            # Do a breadth first search for each vertex in the graph
+            while something_at_level:
+                at_level = self.breadth_first_search(from_vert, level)
+                # If there are vertices at this level,
+                if len(at_level) > 0:
+                    # Set the shortest path from from_vert to to_vert
+                    for to_vert in at_level:
+                        # Set path for all edges
+                        edge = (from_vert.id, to_vert.id)
+                        paths[edge] = level
+                    # Move on to the next level
+                    level += 1
+                # Otherwise, break the loop by marking that nothing was found
+                else:
+                    something_at_level = False
+
+        # Calculate the average path length
+        total_path_length = sum(paths.values())
+        total_edges = (self.num_vertices * (self.num_vertices - 1))
+        average_path = total_path_length / total_edges
+        return average_path
