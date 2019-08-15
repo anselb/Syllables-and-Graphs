@@ -1,4 +1,5 @@
 import time
+import random
 from graph import Graph
 from hyphenator import read_patterns_file, parse_word
 
@@ -79,12 +80,44 @@ def verify_graph(graph):
     print(sum)
 
 
+def generate_word(graph):
+    syllable_counts = {1: 21830, 2: 56852, 3: 50452, 4: 26630, 5: 11751,
+                       6: 4044, 7: 1038, 8: 195, 9: 30, 10: 1}
+    word_count = sum(syllable_counts.values())
+    rand_int = random.randint(1, word_count)
+
+    word_length = 0
+    word_counter = 21830
+    for syllable_count in syllable_counts:
+        num_words = syllable_counts[syllable_count]
+        if rand_int >= word_counter:
+            word_counter += num_words
+        else:
+            word_length = syllable_count
+            break
+
+    syllables = graph.stochastic_walk(word_length)
+    word = ""
+    for syllable in syllables:
+        word += syllable.id
+    return word
+
+
 def main():
     """Run the project."""
     graph = Graph(weighted=True, directed=True)
     graph.make_graph_from_file("syllable_graph.txt")
 
-    # Add edge from 'er' to 'y' to make algorithm work better
+    # print(graph.longest_walk())
+
+    # Generate Words
+    print("Here are three randomly generated words:")
+    print(f"1. {generate_word(graph)}")
+    print(f"2. {generate_word(graph)}")
+    print(f"3. {generate_word(graph)}")
+    print("")
+
+    # Add edge from 'er' to 'y' to make algorithm work better (bakery)
     graph.add_edge('er', 'y', 1)
 
     # Diameter
@@ -94,7 +127,7 @@ def main():
     end = diameter_info[2]
     print(f"Diameter: {diameter}")
     shortest_path = graph.find_shortest_path(start.id, end.id)
-    print(f"Path with length of diameter: {shortest_path}\n")
+    print(f"Path with length of diameter: {[v.id for v in shortest_path]}\n")
 
     # Syllable influence
     print("Which syllable has the greatest influence?")

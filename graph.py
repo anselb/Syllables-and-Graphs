@@ -785,3 +785,42 @@ class Graph:
 
         print(vertices)
         return walk
+
+    def weighted_random_neighbor(self, vertex):
+        """Stochastically sample and return a neighbor of a given vertex."""
+        # Get all neighbors of the passed in vertex
+        neighbors = vertex.get_neighbors()
+        # Get the total weight for use in stochastic sampling
+        total_weight = sum(vertex.neighbors.values())
+        # This random integer will choose the neighbor, based on weight
+        random_int = random.randint(1, total_weight)
+
+        # Find which neighbor will be chosen
+        for neighbor in neighbors:
+            # Iteratively reduce the random integer by the weight of each
+            # neighbor until the random integer is 0
+            random_int -= vertex.get_edge_weight(neighbor)
+            # When the random integer is 0, it indicates the loop has reached
+            # the bounds of choosen neighbor, so it returns that neighbor
+            if random_int <= 0:
+                return neighbor
+
+    def stochastic_walk(self, walk_length=3):
+        """Return a probability based walk based on the weights of edges."""
+        # There needs to be valid walking distance, the loop ceils walk_length
+        if walk_length < 1:
+            raise ValueError("walk_length cannot be less than 1")
+
+        # Get a random starting vertex
+        start_vertex = random.choice(list(self.get_vertices()))
+        # Initialize the walk with the starting vertex
+        walk = [start_vertex]
+
+        # Walk until number of edges (number of vertices - 1) is walk_length
+        while len(walk) - 1 < walk_length:
+            # Stochastically sample the next vertex, by using the last vertex
+            next_vertex = self.weighted_random_neighbor(walk[-1])
+            walk.append(next_vertex)
+
+        # Return the walked vertices, in order
+        return walk
